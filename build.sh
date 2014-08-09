@@ -1,5 +1,5 @@
 #!/bin/sh
-PATH=node_modules/.bin;$PATH
+export PATH="node_modules/.bin:$PATH"
 (browserify --version 2>/dev/null || npm install browserify)>/dev/null
 npm install
 browserify -s PlatformSocket -d -o platform_debug.js js/platform.js
