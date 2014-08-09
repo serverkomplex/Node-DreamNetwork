@@ -1,0 +1,35 @@
+{
+  "name": "dreamnetwork",
+  "version": "0.0.1",
+  "description": "DreamNetwork client library for node.js",
+  "main": "platform.js",
+  "dependencies": {
+    "bson": "~0.2.11",
+    "buffalo-browserify": "git://github.com/icedream/node-buffalo.git",
+    "buffer": "~2.5.0",
+    "jquery": "~2.1.1",
+    "typedarray-to-buffer": "~1.0.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/DreamNetwork/Node-DreamNetwork.git"
+  },
+  "keywords": [
+    "browserify",
+    "dreamnetwork",
+    "browser",
+    "platform",
+    "websocket",
+    "networking",
+    "network"
+  ],
+  "author": "Carl Kittelberger/Icedream",
+  "license": "AGPL 3.0",
+  "bugs": {
+    "url": "https://github.com/DreamNetwork/Node-DreamNetwork/issues"
+  }
+}
