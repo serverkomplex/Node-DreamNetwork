@@ -16,9 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require("buffer");
+//require("buffer");
 
 var $ = require("jquery"); // TODO: Get rid of $.extend somehow
+var ce = require("cloneextend");
 var BSON = require("buffalo-browserify");
 var toBuffer = require("typedarray-to-buffer");
 
@@ -154,7 +155,7 @@ PlatformSocket.prototype.connect = function() {
 
     console.log("Connecting to platform...");
     trigger(platform, "connecting");
-    platform.socket = new WebSocket(platform.url);
+    platform.socket = new WebSocket(platform.url); // TODO: node compatibility actually needed, me fool!!!
 
     // force binary mode
     platform.socket.binaryType = "arraybuffer";
@@ -175,8 +176,9 @@ PlatformSocket.prototype.connect = function() {
             }
         }
 
-        trigger(platform, "messagereceived", msg);
-        trigger(platform, msg.typeName.toLower(), msg.body);
+        // we're cloning the message here to avoid manipulation from event handlers
+        trigger(platform, "messagereceived", ce.extend(msg));
+        trigger(platform, msg.typeName.toLower(), ce.extend(msg.body));
 
         // we need to wait for the server's initial ping or it might be our data doesn't
         // reach the server. http://stackoverflow.com/a/21201020

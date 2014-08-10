@@ -1,14 +1,15 @@
 {
   "name": "dreamnetwork",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "DreamNetwork client library for node.js",
-  "main": "platform.js",
+  "main": "js/platform.js",
   "dependencies": {
-    "bson": "~0.2.11",
+    "bson": "~0.2",
     "buffalo-browserify": "git://github.com/icedream/node-buffalo.git",
-    "buffer": "~2.5.0",
-    "jquery": "~2.1.1",
-    "typedarray-to-buffer": "~1.0.3"
+    "buffer": "~2.5",
+    "jquery": "~2.1",
+    "typedarray-to-buffer": "~1.0",
+    "cloneextend": "~0.0.3"
   },
   "devDependencies": {},
   "scripts": {
