@@ -218,7 +218,7 @@ PlatformSocket.prototype.send = function(type, message) {
         return false;
 
     this.socket.send(msg);
-    trigger(platform, "messagesend", {
+    trigger(this, "messagesend", {
         "requestId": this.msgid,
         "typeId": typeId,
         "typeName": typeName,
