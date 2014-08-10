@@ -178,7 +178,7 @@ PlatformSocket.prototype.connect = function() {
 
         // we're cloning the message here to avoid manipulation from event handlers
         trigger(platform, "messagereceived", ce.extend(msg));
-        trigger(platform, msg.typeName.toLower(), ce.extend(msg.body));
+        trigger(platform, msg.typeName.toLowerCase(), ce.extend(msg.body));
 
         // we need to wait for the server's initial ping or it might be our data doesn't
         // reach the server. http://stackoverflow.com/a/21201020
