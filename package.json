@@ -9,7 +9,8 @@
     "buffer": "~2.5",
     "jquery": "~2.1",
     "typedarray-to-buffer": "~1.0",
-    "cloneextend": "~0.0.3"
+    "cloneextend": "~0.0.3",
+    "node-uuid": "~1.4"
   },
   "devDependencies": {},
   "scripts": {

@@ -22,6 +22,7 @@ var $ = require("jquery"); // TODO: Get rid of $.extend somehow
 var ce = require("cloneextend");
 var BSON = require("buffalo-browserify");
 var toBuffer = require("typedarray-to-buffer");
+var uuid = require("node-uuid");
 
 // this can be generated from the server with argument "typeids.js"
 var typeIds = {
@@ -87,16 +88,17 @@ function PlatformSocket(host, port, path, ssl) {
 
     // target url for websocket
     this.url = protocol + "://" + host + ":" + port + path;
+    this.authenticated = false;
     this.guid = null;
 }
 
 /**
  * Encodes a message so that it can be transferred over the socket.
  */
-function msgencode(pid, type, message) {
+function msgencode(pid, type, msg) {
     // binary json used to serialized message
-    messageBuffer = BSON.serialize(message /*, false, true, false*/ );
-    messageLength = messageBuffer.length; // || messageBuffer.byteLength;
+    messageBuffer = BSON.serialize(msgnormalizeencode(msg));
+    messageLength = messageBuffer.length;
 
     /*
      * header:
@@ -121,6 +123,27 @@ function msgencode(pid, type, message) {
 }
 
 /**
+ * Normalizes a few types in a message to encode.
+ */
+function msgnormalizeencode(msg, key) {
+    var m = ce.clone(msg);
+    for (var k in m)
+    {
+        if ((m[k] instanceof String || typeof m[k] === "string") && k.indexOf("Guid") > -1) {
+            // this is a guid
+            var guidStr = m[k];
+            m[k] = new Buffer(16);
+            uuid.parse(guidStr, m[k]);
+        }
+
+        if (Array.isArray(m[k])) {
+            m[k] = msgnormalizeencode(m[k], k);
+        }
+    }
+    return m;
+}
+
+/**
  * Decodes a message from a network-received buffer.
  */
 function msgdecode(buffer) {
@@ -129,7 +152,7 @@ function msgdecode(buffer) {
     var type = bufferView.getUint32(4, false);
     var body = new Uint8Array(buffer, 8);
     body = new Buffer(body);
-    var message = BSON.parse(body);
+    var message = msgnormalizedecode(BSON.parse(body));
 
     return {
         "isResponse": pid !== 0,
@@ -138,6 +161,27 @@ function msgdecode(buffer) {
         "typeName": typeNames.server[type],
         "body": message
     };
+}
+
+/**
+ * Normalizes a few types in a decoded message.
+ */
+function msgnormalizedecode(msg, key) {
+    var m = ce.clone(msg);
+    for (var k in m)
+    {
+        // FIXME: Bug with one of the condition functions here that manipulates the m variable. WTF.
+        var tm = m;
+        if (Buffer.isBuffer(tm[k]) && (k.indexOf("Guid") > -1 || (!!key && key.indexOf("Guid") > -1))) {
+            // this is a guid
+            m[k] = uuid.unparse(m[k]);
+        }
+
+        if (Array.isArray(m[k])) {
+            m[k] = msgnormalizedecode(m[k], k);
+        }
+    }
+    return m;
 }
 
 /**
@@ -153,7 +197,6 @@ function trigger(self, name) {
 PlatformSocket.prototype.connect = function() {
     var platform = this;
 
-    console.log("Connecting to platform...");
     trigger(platform, "connecting");
     platform.socket = new WebSocket(platform.url); // TODO: node compatibility actually needed, me fool!!!
 
@@ -167,25 +210,25 @@ PlatformSocket.prototype.connect = function() {
     platform.socket.onmessage = function(msg) {
         msg = msgdecode(msg.data);
 
+        // we're cloning the message here to avoid manipulation from event handlers
+        trigger(platform, "messagereceived", ce.extend(msg));
+
         // internal handling
         if (msg.typeName == "LoginResponse") {
             if (msg.body.Success) {
-                platform.guid = msg.body.ClientGuid.buffer;
+                platform.guid = msg.body.ClientGuid;
                 platform.authenticated = true;
                 trigger(platform, "authenticated", platform.guid);
             }
         }
 
-        // we're cloning the message here to avoid manipulation from event handlers
-        trigger(platform, "messagereceived", ce.extend(msg));
-        trigger(platform, msg.typeName.toLowerCase(), ce.extend(msg.body));
-
         // we need to wait for the server's initial ping or it might be our data doesn't
         // reach the server. http://stackoverflow.com/a/21201020
         if (msg.typeName == "InitialPingMessage") {
-            console.log("Ready to send data.");
             trigger(platform, "open");
         }
+
+        trigger(platform, msg.typeName.toLowerCase(), ce.extend(msg.body));
     };
     platform.socket.onclose = function() {
         trigger(platform, "close");
