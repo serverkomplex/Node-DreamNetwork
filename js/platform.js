@@ -144,7 +144,7 @@ function msgdecode(buffer) {
  * Trigger an event if it is set properly.
  */
 function trigger(self, name) {
-    return !!self["on" + name] ? self["on" + name].apply(self, arguments.slice(2)) : null;
+    return !!self["on" + name] ? self["on" + name].apply(self, Array.prototype.slice.call(arguments, 2)) : null;
 }
 
 /**
