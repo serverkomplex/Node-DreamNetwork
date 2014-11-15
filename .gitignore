@@ -26,3 +26,4 @@ node_modules
 
 # Debug builds (build.bat/build.sh)
 *_debug.js
+/*.js
