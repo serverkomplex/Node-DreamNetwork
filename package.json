@@ -12,7 +12,11 @@
     "cloneextend": "~0.0.3",
     "node-uuid": "~1.4"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "fixmyjs": "*",
+    "packer": "*",
+    "browserify": "*"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
