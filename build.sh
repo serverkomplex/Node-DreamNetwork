@@ -5,8 +5,5 @@ export PATH="node_modules/.bin:$PATH"
 
 npm install
 
-browserify -s PlatformSocket -d -o platform_debug.js js/platform.js
-browserify -s PlatformSocket js/platform.js | packer -s 1 -b 1 -o platform.js
-
-browserify -s PushClient -d -o platform-streaming_debug.js js/platform-streaming.js
-browserify -s PushClient js/platform-streaming.js | packer -s 1 -b 1 -o platform-streaming.js
+browserify -s DreamNetwork -d -o platform_debug.js js/platform.js
+browserify -s DreamNetwork js/platform.js | packer -s 1 -b 1 -o platform.js
