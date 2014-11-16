@@ -7,5 +7,5 @@ call browserify -s DreamNetwork js/platform.js -o platform_release.js
 
 call fixmyjs platform_debug.js platform_release.js
 
-call packer -s 1 -o platform.js -i platform_release.js
+call packer -b 1 -s 1 -o platform.js -i platform_release.js
 del platform_release.js
