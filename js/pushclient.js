@@ -116,11 +116,15 @@ PushClient.prototype.connect = function() {
         /* internal handling */
         // we need to wait for the server's initial ping or it might be our data doesn't
         // reach the server. http://stackoverflow.com/a/21201020
-        if (platform.waitingForInitialPing && msg["Ping"] != undefined && msg["Ping"] != null) {
+        if (platform.waitingForInitialPing && !!msg["Ping"]) {
             trigger(platform, "open", msg.Ping);
             platform.waitingForInitialPing = false;
         } else {
             trigger(platform, "ping", msg.Ping);
+        }
+
+        if (!!msg["Notification"]) {
+            trigger(platform, "notification", msg);
         }
 
         trigger(platform, "messagereceived", ce.extend(msg));
