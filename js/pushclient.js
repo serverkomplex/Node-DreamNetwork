@@ -51,17 +51,6 @@ function msgencode(msg) {
     messageBuffer = BSON.serialize(msgnormalizeencode(msg));
     messageLength = messageBuffer.length;
 
-    /*
-     * header:
-     * - message type (uint32/4 bytes/big endian)
-     *
-     * content:
-     * - message (bson/n bytes)
-     *
-     * HH HH HH HH CC CC CC .. CC CC
-     *
-     * H = header, C = content
-     */
     buffer = new ArrayBuffer(messageLength); // message is a string and js works with unicode (2 bytes per char)
     bufferView = new DataView(buffer);
     for (var i = 0; i < messageLength; i++) {
@@ -185,7 +174,7 @@ PushClient.prototype.instant = function(channel, type) {
 };
 
 PushClient.prototype.close = function() {
-    this.send("DisconnectMessage");
+    this.socket.close();
 };
 
 module.exports = PushClient;
