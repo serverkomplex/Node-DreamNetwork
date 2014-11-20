@@ -119,7 +119,7 @@ PushClient.prototype.connect = function() {
         if (platform.waitingForInitialPing && !!msg["Ping"]) {
             trigger(platform, "open", msg.Ping);
             platform.waitingForInitialPing = false;
-        } else {
+        } else if(!!msg["Ping"]) {
             trigger(platform, "ping", msg.Ping);
         }
 
